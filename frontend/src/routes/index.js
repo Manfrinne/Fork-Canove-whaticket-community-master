@@ -6,7 +6,6 @@ import LoggedInLayout from "../layout";
 import Dashboard from "../pages/Dashboard/";
 import Tickets from "../pages/Tickets/";
 import Spy from "../pages/Spy/";
-import SpyUser from "../pages/SpyUser/";
 import Login from "../pages/Login/";
 import Connections from "../pages/Connections/";
 import Settings from "../pages/Settings/";
@@ -42,7 +41,7 @@ const Routes = () => {
               <Route
                 exact
                 path="/spyUser/:spiedUserId?"
-                component={SpyUser}
+                component={Spy}
                 isPrivate
               />
               <Route

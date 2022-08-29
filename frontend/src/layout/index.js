@@ -221,7 +221,8 @@ const LoggedInLayout = ({ children }) => {
             noWrap
             className={classes.title}
           >
-            {process.env.REACT_APP_NAME_SYSTEM}
+            {/* {process.env.REACT_APP_TITLE} */}
+            Whaticket - Manfrinne
           </Typography>
           {user.id && <NotificationsPopOver />}
 

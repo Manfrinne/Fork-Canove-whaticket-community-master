@@ -8,7 +8,7 @@ import Paper from "@material-ui/core/Paper";
 import TicketListItem from "../TicketListItem";
 import TicketsListSkeleton from "../TicketsListSkeleton";
 
-import useTickets from "../../hooks/useTickets";
+import useUserTickets from "../../hooks/useUserTickets";
 import { i18n } from "../../translate/i18n";
 import { AuthContext } from "../../context/Auth/AuthContext";
 
@@ -152,21 +152,20 @@ const reducer = (state, action) => {
 	}
 };
 
-const TicketsList = (props) => {
-	const { status, searchParam, showAll, selectedQueueIds, updateCount, style } = props;
+const SpyUserTicketsList = (props) => {
+	const { status, searchParam, showAll, selectedQueueIds, updateCount, style } =
+		props;
 	const classes = useStyles();
 	const [pageNumber, setPageNumber] = useState(1);
 	const [ticketsList, dispatch] = useReducer(reducer, []);
 	const { user } = useContext(AuthContext);
-	const {profile, queues} = user;
-
 
 	useEffect(() => {
 		dispatch({ type: "RESET" });
 		setPageNumber(1);
 	}, [status, searchParam, dispatch, showAll, selectedQueueIds]);
 
-	const { tickets, hasMore, loading } = useTickets({
+	const { tickets, hasMore, loading } = useUserTickets({
 		pageNumber,
 		searchParam,
 		status,
@@ -175,16 +174,12 @@ const TicketsList = (props) => {
 	});
 
 	useEffect(() => {
-
-		const queueIds = queues.map((q) => q.id);
-		const filteredTickets = tickets.filter((t) => queueIds.indexOf(t.queueId) > -1);
-
-		if (profile === "user") {
-			dispatch({type: "LOAD_TICKETS", payload: filteredTickets});
-		} else {
-			dispatch({type: "LOAD_TICKETS",	payload: tickets,	});
-		}
-	}, [tickets, status, searchParam, queues, profile]);
+		if (!status && !searchParam) return;
+		dispatch({
+			type: "LOAD_TICKETS",
+			payload: tickets,
+		});
+	}, [tickets, status, searchParam]);
 
 	useEffect(() => {
 		const socket = openSocket();
@@ -305,4 +300,4 @@ const TicketsList = (props) => {
 	);
 };
 
-export default TicketsList;
+export default SpyUserTicketsList;

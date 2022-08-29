@@ -1,0 +1,7 @@
+node_modules
+public/*
+dist
+.env
+.env.test
+package-lock.json
+.wwebjs_auth/

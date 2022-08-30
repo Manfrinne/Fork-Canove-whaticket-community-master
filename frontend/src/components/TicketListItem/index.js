@@ -53,6 +53,11 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: "1.4",
   },
 
+  avatarListTickets: {
+    marginLeft: "4px",
+    marginBottom: "12px"
+  },
+
   noTicketsTitle: {
     textAlign: "center",
     fontSize: "16px",
@@ -90,7 +95,7 @@ const useStyles = makeStyles((theme) => ({
   badgeStyle: {
     color: "white",
     backgroundColor: green[500],
-    marginRight: 255,
+    marginRight: "9px",
   },
 
   acceptButton: {
@@ -167,7 +172,7 @@ const TicketListItem = ({ ticket }) => {
     history.push(`/tickets/${id}`);
   };
 
-  const handleSpyTicket = (value) => () => {    
+  const handleSpyTicket = (value) => () => {
     if (spyUserPath.includes("spyUser")) {
       history.push(`/spyUser/${spiedUserId}/${value}`);
     } else {
@@ -200,7 +205,7 @@ const TicketListItem = ({ ticket }) => {
           ></span>
         </Tooltip>
         <ListItemAvatar>
-          <Avatar src={ticket?.contact?.profilePicUrl} />
+          <Avatar className={classes.avatarListTickets} src={ticket?.contact?.profilePicUrl} />
         </ListItemAvatar>
         <ListItemText
           disableTypography

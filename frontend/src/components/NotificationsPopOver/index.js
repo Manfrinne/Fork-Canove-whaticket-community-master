@@ -42,9 +42,12 @@ const useStyles = makeStyles(theme => ({
 
 const NotificationsPopOver = () => {
 	const classes = useStyles();
-
 	const history = useHistory();
 	const { user } = useContext(AuthContext);
+
+  // eslint-disable-next-line
+	const { profile, queues } = user;
+
 	const ticketIdUrl = +history.location.pathname.split("/")[2];
 	const ticketIdRef = useRef(ticketIdUrl);
 	const anchorEl = useRef();
@@ -53,7 +56,8 @@ const NotificationsPopOver = () => {
 
 	const [, setDesktopNotifications] = useState([]);
 
-	const { tickets } = useTickets({ withUnreadMessages: "true" });
+	let { tickets } = useTickets({ withUnreadMessages: "true" });
+
 	const [play] = useSound(alertSound);
 	const soundAlertRef = useRef();
 
@@ -68,6 +72,20 @@ const NotificationsPopOver = () => {
 			Notification.requestPermission();
 		}
 	}, [play]);
+
+	useEffect(() => {
+		if (profile === "user") {
+			const queueIds = queues.map((q) => q.id);
+			const justTicketWithQueues = tickets.filter(
+				(t) => queueIds.indexOf(t.queueId) > -1
+			);
+
+      // eslint-disable-next-line
+			tickets = justTicketWithQueues;
+		} else {
+
+    }
+	}, [tickets])
 
 	useEffect(() => {
 		setNotifications(tickets);

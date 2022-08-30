@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -9,6 +9,9 @@ import Ticket from "../../components/Ticket/";
 
 import { i18n } from "../../translate/i18n";
 import Hidden from "@material-ui/core/Hidden";
+
+import api from "../../services/api";
+import { AuthContext } from "../../context/Auth/AuthContext";
 
 const useStyles = makeStyles((theme) => ({
   chatContainer: {
@@ -65,6 +68,30 @@ const useStyles = makeStyles((theme) => ({
 const Chat = () => {
   const classes = useStyles();
   const { ticketId } = useParams();
+  const { user } = useContext(AuthContext);
+  const [ ticketUserId, setTicketUserId ] = useState()
+
+  useEffect(() => {
+    if (ticketId > -1) {
+      const fetchTicket = async () => {
+        try {
+          const { data } = await api.get(`/tickets/${ticketId}`);
+          setTicketUserId(data.userId)
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchTicket()
+    }
+  }, [ticketId])
+
+  const showTicketService = () => {
+    if (user.profile === 'user') {
+      if (user.id === ticketUserId) return true
+    } else {
+      return true
+    }
+  }
 
   return (
     <div className={classes.chatContainer}>
@@ -83,7 +110,7 @@ const Chat = () => {
           </Grid>
           <Grid item xs={12} md={8} className={classes.messagessWrapper}>
             {/* <Grid item xs={8} className={classes.messagessWrapper}> */}
-            {ticketId ? (
+            {ticketId && showTicketService() ? (
               <>
                 <Ticket />
               </>

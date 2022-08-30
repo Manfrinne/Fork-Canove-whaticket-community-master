@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams, useLocation } from "react-router-dom";
 import { parseISO, format, isSameDay } from "date-fns";
 import clsx from "clsx";
 
@@ -136,6 +136,10 @@ const TicketListItem = ({ ticket }) => {
   const isMounted = useRef(true);
   const { user } = useContext(AuthContext);
 
+  const { spiedUserId } = useParams();
+  const location = useLocation();
+  const spyUserPath = location.pathname
+
   useEffect(() => {
     return () => {
       isMounted.current = false;
@@ -163,8 +167,12 @@ const TicketListItem = ({ ticket }) => {
     history.push(`/tickets/${id}`);
   };
 
-  const handleSpyTicket = (value) => () => {
-    history.push(`/spy/${value}`);
+  const handleSpyTicket = (value) => () => {    
+    if (spyUserPath.includes("spyUser")) {
+      history.push(`/spyUser/${spiedUserId}/${value}`);
+    } else {
+      history.push(`/spy/${value}`);
+    }
   };
 
   return (

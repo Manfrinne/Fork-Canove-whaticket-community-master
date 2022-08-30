@@ -40,7 +40,7 @@ const Routes = () => {
               />
               <Route
                 exact
-                path="/spyUser/:spiedUserId?"
+                path="/spyUser/:spiedUserId?/:ticketId?"
                 component={Spy}
                 isPrivate
               />

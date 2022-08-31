@@ -36,7 +36,7 @@ const messages = {
       dashboard: {
         charts: {
           perDay: {
-            title: "Tickets hoje: ",
+            title: "Tickets: ",
           },
         },
         messages: {

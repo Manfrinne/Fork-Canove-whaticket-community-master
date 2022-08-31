@@ -14,6 +14,7 @@ import { i18n } from "../../translate/i18n";
 
 import Chart from "./Chart"
 import UsersList from "./UsersList";
+import DateTime from "./DateTime"
 
 const useStyles = makeStyles(theme => ({
 	container: {
@@ -35,6 +36,13 @@ const useStyles = makeStyles(theme => ({
 		height: 120,
 	},
 	customFixedHeightPaperLg: {
+		padding: theme.spacing(2),
+		display: "flex",
+		overflow: "auto",
+		flexDirection: "column",
+		height: "100%",
+	},
+  customFixedHeightPaperDateTime: {
 		padding: theme.spacing(2),
 		display: "flex",
 		overflow: "auto",
@@ -68,6 +76,11 @@ const Dashboard = () => {
 		<div>
 			<Container maxWidth="lg" className={classes.container}>
 				<Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Paper className={classes.customFixedHeightPaperDateTime}>
+              <DateTime />
+						</Paper>
+					</Grid>
 					<Grid item xs={4}>
 						<Paper className={classes.customFixedHeightPaper} style={{ overflow: "hidden" }}>
 							<Typography component="h3" variant="h6" color="primary" paragraph>

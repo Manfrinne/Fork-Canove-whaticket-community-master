@@ -1,7 +1,13 @@
 import React, { useContext, useState } from "react";
 
 import DateFnsUtils from "@date-io/date-fns";
-import { isWithinInterval, parseISO, startOfDay, endOfDay, isToday } from "date-fns";
+import {
+  isWithinInterval,
+  parseISO,
+  startOfDay,
+  endOfDay,
+  isToday,
+} from "date-fns";
 
 import Paper from "@material-ui/core/Paper";
 import Container from "@material-ui/core/Container";
@@ -84,7 +90,6 @@ const Dashboard = () => {
   };
 
   const GetTickets = (status, showAll, withUnreadMessages) => {
-
     const { tickets } = useTickets({
       status: status,
       showAll: showAll,
@@ -95,17 +100,20 @@ const Dashboard = () => {
     // instanciar somente tickets do dia
     // eslint-disable-next-line
     const isTodayTicket = tickets.filter((ticket) => {
-      const isTodayTicket = isToday(parseISO(ticket.createdAt))
-      if (isTodayTicket) return ticket
-    })
+      const isTodayTicket = isToday(parseISO(ticket.createdAt));
+      if (isTodayTicket) return ticket;
+    });
 
     // instanciar somente tickets dentro de um intervalo de datas
     // eslint-disable-next-line
     const ticketsFilteredByDateRange = tickets.filter((ticket) => {
-      const ticketInsideDateRange = isWithinInterval(parseISO(ticket.createdAt), {
-        start: selectedStartDate,
-        end: selectedEndDate,
-      });
+      const ticketInsideDateRange = isWithinInterval(
+        parseISO(ticket.createdAt),
+        {
+          start: selectedStartDate,
+          end: selectedEndDate,
+        }
+      );
 
       if (ticketInsideDateRange) return ticket;
     });
@@ -207,7 +215,10 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12}>
             <Paper className={classes.fixedHeightPaper}>
-              <Chart />
+              <Chart
+                selectedStartDate={selectedStartDate}
+                selectedEndDate={selectedEndDate}
+              />
             </Paper>
           </Grid>
         </Grid>

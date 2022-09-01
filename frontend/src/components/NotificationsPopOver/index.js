@@ -82,9 +82,7 @@ const NotificationsPopOver = () => {
 
       // eslint-disable-next-line
 			tickets = justTicketWithQueues;
-		} else {
-
-    }
+		}
 	}, [tickets])
 
 	useEffect(() => {

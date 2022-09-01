@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 
 import DateFnsUtils from "@date-io/date-fns";
-import { isWithinInterval, parseISO } from 'date-fns';
+import { isWithinInterval, parseISO, startOfDay, endOfDay, isToday } from "date-fns";
 
 import Paper from "@material-ui/core/Paper";
 import Container from "@material-ui/core/Container";
@@ -21,6 +21,8 @@ import { i18n } from "../../translate/i18n";
 
 import Chart from "./Chart";
 import UsersList from "./UsersList";
+
+import { Can } from "../../components/Can";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -61,12 +63,10 @@ const Dashboard = () => {
   const classes = useStyles();
 
   const [selectedStartDate, setSelectedStartDate] = useState(
-    new Date("2022-01-01T00:00:00")
+    startOfDay(new Date())
   );
 
-  const [selectedEndDate, setSelectedEndDate] = useState(
-    new Date("2022-12-31T23:00:00")
-  );
+  const [selectedEndDate, setSelectedEndDate] = useState(endOfDay(new Date()));
 
   const { user } = useContext(AuthContext);
   var userQueueIds = [];
@@ -84,6 +84,7 @@ const Dashboard = () => {
   };
 
   const GetTickets = (status, showAll, withUnreadMessages) => {
+
     const { tickets } = useTickets({
       status: status,
       showAll: showAll,
@@ -91,60 +92,74 @@ const Dashboard = () => {
       queueIds: JSON.stringify(userQueueIds),
     });
 
+    // instanciar somente tickets do dia
     // eslint-disable-next-line
-    const ticketFilteredByDate = tickets.filter((ticket) => {
-      const ticketInsideDate = isWithinInterval(parseISO(ticket.createdAt), {
+    const isTodayTicket = tickets.filter((ticket) => {
+      const isTodayTicket = isToday(parseISO(ticket.createdAt))
+      if (isTodayTicket) return ticket
+    })
+
+    // instanciar somente tickets dentro de um intervalo de datas
+    // eslint-disable-next-line
+    const ticketsFilteredByDateRange = tickets.filter((ticket) => {
+      const ticketInsideDateRange = isWithinInterval(parseISO(ticket.createdAt), {
         start: selectedStartDate,
         end: selectedEndDate,
       });
 
-      if (ticketInsideDate) return ticket
-    })
+      if (ticketInsideDateRange) return ticket;
+    });
 
-    return ticketFilteredByDate.length;
+    return user.profile === "admin"
+      ? ticketsFilteredByDateRange.length
+      : isTodayTicket.length;
   };
 
   return (
     <div>
       <Container maxWidth="lg" className={classes.container}>
         <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Paper className={classes.customFixedHeightPaperDateTime}>
-
-              {/* Determinar data inicial e final dos tickets exibidos */}
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <Grid container justifyContent="space-evenly">
-                  <KeyboardDatePicker
-                    disableToolbar
-                    variant="inline"
-                    format="dd/MM/yyyy"
-                    margin="normal"
-                    id="date-picker-inline"
-                    label="Data ticket - inicial"
-                    value={selectedStartDate}
-                    onChange={handleDateStartChange}
-                    KeyboardButtonProps={{
-                      "aria-label": "change date",
-                    }}
-                  />
-                  <KeyboardDatePicker
-                    disableToolbar
-                    variant="inline"
-                    format="dd/MM/yyyy"
-                    margin="normal"
-                    id="date-picker-inline"
-                    label="Data ticket - final"
-                    value={selectedEndDate}
-                    onChange={handleDateEndChange}
-                    KeyboardButtonProps={{
-                      "aria-label": "change date",
-                    }}
-                  />
-                </Grid>
-              </MuiPickersUtilsProvider>
-
-            </Paper>
-          </Grid>
+          <Can
+            role={user.profile}
+            perform="spy-tickets-service:view"
+            yes={() => (
+              <Grid item xs={12}>
+                <Paper className={classes.customFixedHeightPaperDateTime}>
+                  {/* Determinar data inicial e final dos tickets exibidos */}
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <Grid container justifyContent="space-evenly">
+                      <KeyboardDatePicker
+                        disableToolbar
+                        variant="inline"
+                        format="dd/MM/yyyy"
+                        margin="normal"
+                        id="date-picker-inline"
+                        label="Data ticket - inicial"
+                        value={selectedStartDate}
+                        onChange={handleDateStartChange}
+                        KeyboardButtonProps={{
+                          "aria-label": "change date",
+                        }}
+                      />
+                      <KeyboardDatePicker
+                        disableToolbar
+                        variant="inline"
+                        format="dd/MM/yyyy"
+                        margin="normal"
+                        id="date-picker-inline"
+                        label="Data ticket - final"
+                        value={selectedEndDate}
+                        onChange={handleDateEndChange}
+                        KeyboardButtonProps={{
+                          "aria-label": "change date",
+                        }}
+                      />
+                    </Grid>
+                  </MuiPickersUtilsProvider>
+                </Paper>
+              </Grid>
+            )}
+          />
           <Grid item xs={4}>
             <Paper
               className={classes.customFixedHeightPaper}
@@ -196,7 +211,6 @@ const Dashboard = () => {
             </Paper>
           </Grid>
         </Grid>
-
         <UsersList />
       </Container>
     </div>

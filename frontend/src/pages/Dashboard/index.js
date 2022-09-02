@@ -27,6 +27,7 @@ import { i18n } from "../../translate/i18n";
 
 import Chart from "./Chart";
 import UsersList from "./UsersList";
+import ChartAdmin from "./ChartAdmin"
 
 import { Can } from "../../components/Can";
 
@@ -215,10 +216,14 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12}>
             <Paper className={classes.fixedHeightPaper}>
-              <Chart
-                selectedStartDate={selectedStartDate}
-                selectedEndDate={selectedEndDate}
-              />
+              {user.profile === "admin" ? (
+                <ChartAdmin
+                  selectedStartDate={selectedStartDate}
+                  selectedEndDate={selectedEndDate}
+                />
+              ) : (
+                <Chart />
+              )}
             </Paper>
           </Grid>
         </Grid>

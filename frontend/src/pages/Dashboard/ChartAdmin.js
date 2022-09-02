@@ -16,11 +16,14 @@ import { i18n } from "../../translate/i18n";
 import Title from "./Title";
 import useTickets from "../../hooks/useTickets";
 
-const Chart = () => {
+const ChartAdmin = (props) => {
+  const {selectedStartDate, selectedEndDate} = props;
 	const theme = useTheme();
 
 	const date = useRef(new Date().toISOString());
-	const { tickets } = useTickets({ date: date.current });
+	const { tickets } = useTickets({ searchParam: true });
+
+  console.log(tickets)
 
 	const [chartData, setChartData] = useState([
 		{ time: "08:00", amount: 0 },
@@ -56,7 +59,9 @@ const Chart = () => {
 		<React.Fragment>
 			<Title>{`${i18n.t("dashboard.charts.perDay.title")}${
 				tickets.length
-			}`}</Title>
+			}`}
+      <> Admin Chart </>
+      </Title>
 			<ResponsiveContainer>
 				<BarChart
 					data={chartData}
@@ -92,4 +97,4 @@ const Chart = () => {
 	);
 };
 
-export default Chart;
+export default ChartAdmin;

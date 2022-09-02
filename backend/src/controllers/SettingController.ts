@@ -39,3 +39,19 @@ export const update = async (
 
   return res.status(200).json(setting);
 };
+
+export const findConfig = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+
+  const { settingKey: key } = req.params;
+  const { value } = req.body;
+
+  const setting = await UpdateSettingService({
+    key,
+    value
+  });
+
+  return res.status(200).json(setting);
+};

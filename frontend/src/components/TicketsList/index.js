@@ -12,6 +12,8 @@ import useTickets from "../../hooks/useTickets";
 import { i18n } from "../../translate/i18n";
 import { AuthContext } from "../../context/Auth/AuthContext";
 
+import api from "../../services/api";
+
 const useStyles = makeStyles(theme => ({
 	ticketsListWrapper: {
 		position: "relative",
@@ -159,7 +161,7 @@ const TicketsList = (props) => {
 	const [ticketsList, dispatch] = useReducer(reducer, []);
 	const { user } = useContext(AuthContext);
 	const {profile, queues} = user;
-
+	const [settingShowAll, setSettingShowAll] = useState("")
 
 	useEffect(() => {
 		dispatch({ type: "RESET" });
@@ -175,16 +177,33 @@ const TicketsList = (props) => {
 	});
 
 	useEffect(() => {
+		const fetchSettingShowAll = async () => {
+			const {data} = await api.get(`/settings/userViewAll`);
+			setSettingShowAll(data.value)
+		};
 
-		const queueIds = queues.map((q) => q.id);
-		const filteredTickets = tickets.filter((t) => queueIds.indexOf(t.queueId) > -1);
+		fetchSettingShowAll()
+	}, [settingShowAll])
 
-		if (profile === "user") {
-			dispatch({type: "LOAD_TICKETS", payload: filteredTickets});
-		} else {
-			dispatch({type: "LOAD_TICKETS",	payload: tickets,	});
-		}
-	}, [tickets, status, searchParam, queues, profile]);
+  useEffect(() => {
+    const queueIds = queues.map((q) => q.id);
+    const filteredTickets = tickets.filter(
+      (t) => queueIds.indexOf(t.queueId) > -1
+    );
+
+    if (profile === "user") {
+
+			if (settingShowAll === 'enabled') {
+				dispatch({ type: "LOAD_TICKETS", payload: tickets })
+			} else {
+        dispatch({ type: "LOAD_TICKETS", payload: filteredTickets });
+      }
+
+    } else {
+      dispatch({ type: "LOAD_TICKETS", payload: tickets });
+    }
+		// eslint-disable-next-line
+  }, [tickets, status, searchParam, queues, profile]);
 
 	useEffect(() => {
 		const socket = openSocket();

@@ -36,7 +36,7 @@ const messages = {
       dashboard: {
         charts: {
           perDay: {
-            title: "Tickets: ",
+            title: "Tickets hoje: ",
           },
         },
         messages: {
@@ -369,6 +369,13 @@ const messages = {
         settings: {
           userCreation: {
             name: "Criação de usuário",
+            options: {
+              enabled: "Ativado",
+              disabled: "Desativado",
+            },
+          },
+          userViewAll: {
+            name: "Listar tickets sem fila para todos usuários",
             options: {
               enabled: "Ativado",
               disabled: "Desativado",

@@ -81,6 +81,23 @@ const Settings = () => {
 			await api.put(`/settings/${settingKey}`, {
 				value: selectedValue,
 			});
+
+			toast.success(i18n.t("settings.success"));
+		} catch (err) {
+			toastError(err);
+		}
+	};
+
+
+	const handleChangeSettingShowAll = async e => {
+		const selectedValue = e.target.value;
+		const settingKey = e.target.name;
+
+		try {
+			await api.put(`/settings/${settingKey}`, {
+				value: selectedValue,
+			});
+
 			toast.success(i18n.t("settings.success"));
 		} catch (err) {
 			toastError(err);
@@ -125,9 +142,35 @@ const Settings = () => {
 				</Paper>
 
 				<Paper className={classes.paper}>
+					<Typography variant="body1">
+						{i18n.t("settings.settings.userViewAll.name")}
+					</Typography>
+					<Select
+						margin="dense"
+						variant="outlined"
+						native
+						id="userViewAll-setting"
+						name="userViewAll"
+						value={
+							settings && settings.length > 0 && getSettingValue("userViewAll")
+						}
+						className={classes.settingOption}
+						onChange={handleChangeSettingShowAll}
+					>
+						<option value="enabled">
+							{i18n.t("settings.settings.userViewAll.options.enabled")}
+						</option>
+						<option value="disabled">
+							{i18n.t("settings.settings.userViewAll.options.disabled")}
+						</option>
+					</Select>
+
+				</Paper>
+
+				<Paper className={classes.paper}>
 					<TextField
 						id="api-token-setting"
-						readOnly
+						readonly
 						label="Token Api"
 						margin="dense"
 						variant="outlined"

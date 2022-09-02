@@ -12,4 +12,6 @@ settingRoutes.get("/settings", isAuth, SettingController.index);
 // change setting key to key in future
 settingRoutes.put("/settings/:settingKey", isAuth, SettingController.update);
 
+settingRoutes.get("/settings/:settingKey", isAuth, SettingController.findConfig);
+
 export default settingRoutes;

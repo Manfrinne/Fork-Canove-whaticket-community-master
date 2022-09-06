@@ -16,12 +16,28 @@ import { i18n } from "../../translate/i18n";
 import Title from "./Title";
 import useTickets from "../../hooks/useTickets";
 
+import api from "../../services/api";
+
 const ChartAdmin = (props) => {
   // const {selectedStartDate, selectedEndDate} = props;
+
 	const theme = useTheme();
 
-	const date = useRef(new Date().toISOString());
-	const { tickets } = useTickets({ date: date.current });
+  const [tickets, setTickets] = useState([]);
+
+  useEffect(() => {
+    const fetchTickets = async() => {
+      try {
+        const { data } = await api.get("/tickets")
+        setTickets(data.tickets)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchTickets()
+  }, []);
+
+  console.log(tickets)
 
 	const [chartData, setChartData] = useState([
 		{ time: "08:00", amount: 0 },

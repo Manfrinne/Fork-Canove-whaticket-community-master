@@ -49,8 +49,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const UsersListDashboard = () => {
+const UsersListDashboard = (props) => {
   const classes = useStyles();
+
+  const { selectedStartDate, selectedEndDate } = props;
 
   const [loading, setLoading] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
@@ -102,7 +104,12 @@ const UsersListDashboard = () => {
           <TableHead>
             <TableRow>
               <MainHeader>
-                <Typography component="h3" variant="h6" color="primary" paragraph>
+                <Typography
+                  component="h3"
+                  variant="h6"
+                  color="primary"
+                  paragraph
+                >
                   {i18n.t("Listar tickets por usuário")}
                 </Typography>
               </MainHeader>
@@ -121,14 +128,17 @@ const UsersListDashboard = () => {
                   <TableCell align="center">{i18n.t("Espiar")}</TableCell>
                 )}
               />
-
             </TableRow>
           </TableHead>
           <TableBody>
             <>
               {users.map((user) => (
                 <TableRow user={user} key={user.id}>
-                  <UserList user={user} />
+                  <UserList
+                    selectedStartDate={selectedStartDate}
+                    selectedEndDate={selectedEndDate}
+                    user={user}
+                  />
                 </TableRow>
               ))}
               {loading && <TableRowSkeleton columns={4} />}

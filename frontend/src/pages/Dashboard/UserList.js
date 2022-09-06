@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 
-import { parseISO, isToday } from "date-fns";
+import { isWithinInterval, parseISO } from "date-fns";
 
 import TableCell from "@material-ui/core/TableCell";
 import IconButton from "@material-ui/core/IconButton";
@@ -16,19 +16,21 @@ import toastError from "../../errors/toastError";
 
 import { Can } from "../../components/Can";
 
-const UserList = ({ user }) => {
+const UserList = (props) => {
+  const { selectedStartDate, selectedEndDate, user } = props;
+
   const { user: loggedUser } = useContext(AuthContext);
   const history = useHistory();
 
   const handleSpyUserService = async (spiedUserId) => {
-		try {
+    try {
       await api.get(`/spyUser/${spiedUserId}`);
-		} catch (err) {
-			toastError(err);
-		}
+    } catch (err) {
+      toastError(err);
+    }
 
-		history.push(`/spyUser/${spiedUserId}`);
-	};
+    history.push(`/spyUser/${spiedUserId}`);
+  };
 
   const GetTicketsByUser = (status, showAll, withUnreadMessages) => {
     var userQueueIds = [];
@@ -46,14 +48,20 @@ const UserList = ({ user }) => {
 
     const ticketsByUser = tickets.filter((t) => t.userId === user.id);
 
-    // instanciar somente tickets do dia
     // eslint-disable-next-line
-    const isTodayTicket = ticketsByUser.filter((ticket) => {
-      const isTodayTicket = isToday(parseISO(ticket.createdAt));
-      if (isTodayTicket) return ticket;
+    const ticketsFilteredByDateRange = ticketsByUser.filter((ticket) => {
+      const ticketInsideDateRange = isWithinInterval(
+        parseISO(ticket.createdAt),
+        {
+          start: selectedStartDate,
+          end: selectedEndDate,
+        }
+      );
+
+      if (ticketInsideDateRange) return ticket;
     });
 
-    return isTodayTicket.length;
+    return ticketsFilteredByDateRange.length;
   };
 
   return (

@@ -27,7 +27,7 @@ import { i18n } from "../../translate/i18n";
 
 import Chart from "./Chart";
 import UsersList from "./UsersList";
-import ChartAdmin from "./ChartAdmin"
+import ChartAdmin from "./ChartAdmin";
 
 import { Can } from "../../components/Can";
 
@@ -98,14 +98,12 @@ const Dashboard = () => {
       queueIds: JSON.stringify(userQueueIds),
     });
 
-    // instanciar somente tickets do dia
     // eslint-disable-next-line
     const isTodayTicket = tickets.filter((ticket) => {
       const isTodayTicket = isToday(parseISO(ticket.createdAt));
       if (isTodayTicket) return ticket;
     });
 
-    // instanciar somente tickets dentro de um intervalo de datas
     // eslint-disable-next-line
     const ticketsFilteredByDateRange = tickets.filter((ticket) => {
       const ticketInsideDateRange = isWithinInterval(
@@ -227,7 +225,10 @@ const Dashboard = () => {
             </Paper>
           </Grid>
         </Grid>
-        <UsersList />
+        <UsersList
+          selectedStartDate={selectedStartDate}
+          selectedEndDate={selectedEndDate}
+        />
       </Container>
     </div>
   );

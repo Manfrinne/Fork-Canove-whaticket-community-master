@@ -17,13 +17,11 @@ import Title from "./Title";
 import useTickets from "../../hooks/useTickets";
 
 const ChartAdmin = (props) => {
-  const {selectedStartDate, selectedEndDate} = props;
+  // const {selectedStartDate, selectedEndDate} = props;
 	const theme = useTheme();
 
 	const date = useRef(new Date().toISOString());
-	const { tickets } = useTickets({ searchParam: true });
-
-  console.log(tickets)
+	const { tickets } = useTickets({ date: date.current });
 
 	const [chartData, setChartData] = useState([
 		{ time: "08:00", amount: 0 },

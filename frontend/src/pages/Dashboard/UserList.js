@@ -1,5 +1,7 @@
 import React, { useContext } from "react";
 
+import { parseISO, isToday } from "date-fns";
+
 import TableCell from "@material-ui/core/TableCell";
 import IconButton from "@material-ui/core/IconButton";
 import RemoveRedEyeIcon from "@material-ui/icons/RemoveRedEye";
@@ -44,7 +46,14 @@ const UserList = ({ user }) => {
 
     const ticketsByUser = tickets.filter((t) => t.userId === user.id);
 
-    return ticketsByUser.length;
+    // instanciar somente tickets do dia
+    // eslint-disable-next-line
+    const isTodayTicket = ticketsByUser.filter((ticket) => {
+      const isTodayTicket = isToday(parseISO(ticket.createdAt));
+      if (isTodayTicket) return ticket;
+    });
+
+    return isTodayTicket.length;
   };
 
   return (

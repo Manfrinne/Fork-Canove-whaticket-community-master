@@ -34,6 +34,12 @@ const Routes = () => {
               />
               <Route
                 exact
+                path="/ticketsByDate"
+                component={Tickets}
+                isPrivate
+              />
+              <Route
+                exact
                 path="/spy/:ticketId?"
                 component={Spy}
                 isPrivate

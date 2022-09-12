@@ -9,7 +9,7 @@ import {
   Label,
   ResponsiveContainer,
 } from "recharts";
-import { startOfHour, parseISO, format } from "date-fns";
+import { startOfHour, parseISO, format, isWithinInterval } from "date-fns";
 
 import { i18n } from "../../translate/i18n";
 
@@ -18,7 +18,7 @@ import Title from "./Title";
 import api from "../../services/api";
 
 const ChartAdmin = (props) => {
-  // const {selectedStartDate, selectedEndDate} = props;
+  const { selectedStartDate, selectedEndDate } = props;
 
   const theme = useTheme();
 
@@ -28,40 +28,52 @@ const ChartAdmin = (props) => {
     const fetchTickets = async () => {
       try {
         const { data } = await api.get("/ticketsByDate");
+        const allTickets = data.tickets
 
-        setTickets(data.tickets);
+        // eslint-disable-next-line
+        const ticketsFilteredByDateRange = allTickets.filter((ticket) => {
+          const ticketInsideDateRange = isWithinInterval(
+            parseISO(ticket.createdAt),
+            {
+              start: selectedStartDate,
+              end: selectedEndDate,
+            }
+          );
+
+          if (ticketInsideDateRange) return ticket;
+        });
+
+        setTickets(ticketsFilteredByDateRange);
       } catch (error) {
         console.error(error);
       }
     };
     fetchTickets();
-  }, []);
+  }, [selectedStartDate, selectedEndDate]);
 
-  console.log(tickets);
-
-  const [chartData, setChartData] = useState([
-    { time: "08:00", amount: 0 },
-    { time: "09:00", amount: 0 },
-    { time: "10:00", amount: 0 },
-    { time: "11:00", amount: 0 },
-    { time: "12:00", amount: 0 },
-    { time: "13:00", amount: 0 },
-    { time: "14:00", amount: 0 },
-    { time: "15:00", amount: 0 },
-    { time: "16:00", amount: 0 },
-    { time: "17:00", amount: 0 },
-    { time: "18:00", amount: 0 },
-    { time: "19:00", amount: 0 },
-  ]);
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
-    setChartData((prevState) => {
-      let aux = [...prevState];
+    setChartData(() => {
+
+      let aux = [
+        { time: "08:00", amount: 0 },
+        { time: "09:00", amount: 0 },
+        { time: "10:00", amount: 0 },
+        { time: "11:00", amount: 0 },
+        { time: "12:00", amount: 0 },
+        { time: "13:00", amount: 0 },
+        { time: "14:00", amount: 0 },
+        { time: "15:00", amount: 0 },
+        { time: "16:00", amount: 0 },
+        { time: "17:00", amount: 0 },
+        { time: "18:00", amount: 0 },
+        { time: "19:00", amount: 0 },
+      ];
 
       aux.forEach((a) => {
         tickets.forEach((ticket) => {
-          format(startOfHour(parseISO(ticket.createdAt)), "HH:mm") === a.time &&
-            a.amount++;
+            format(startOfHour(parseISO(ticket.createdAt)), "HH:mm") === a.time && a.amount++;
         });
       });
 

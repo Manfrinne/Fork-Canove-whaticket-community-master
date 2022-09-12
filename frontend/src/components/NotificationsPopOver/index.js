@@ -124,30 +124,36 @@ const NotificationsPopOver = () => {
 		});
 
 		socket.on("appMessage", data => {
-			if (
-				data.action === "create" &&
-				!data.message.read &&
-				(data.ticket.userId === user?.id || !data.ticket.userId)
-			) {
-				setNotifications(prevState => {
-					const ticketIndex = prevState.findIndex(t => t.id === data.ticket.id);
-					if (ticketIndex !== -1) {
-						prevState[ticketIndex] = data.ticket;
-						return [...prevState];
-					}
-					return [data.ticket, ...prevState];
-				});
 
-				const shouldNotNotificate =
-					(data.message.ticketId === ticketIdRef.current &&
-						document.visibilityState === "visible") ||
-					(data.ticket.userId && data.ticket.userId !== user?.id) ||
-					data.ticket.isGroup;
+      const isUserAdmin = (user.profile === "admin")
 
-				if (shouldNotNotificate) return;
+      if (isUserAdmin) {
+        if (
+          data.action === "create" &&
+          !data.message.read &&
+          (data.ticket.userId === user?.id || !data.ticket.userId)
+        ) {
+          setNotifications(prevState => {
+            const ticketIndex = prevState.findIndex(t => t.id === data.ticket.id);
+            if (ticketIndex !== -1) {
+              prevState[ticketIndex] = data.ticket;
+              return [...prevState];
+            }
+            return [data.ticket, ...prevState];
+          });
 
-				handleNotifications(data);
-			}
+          const shouldNotNotificate =
+            (data.message.ticketId === ticketIdRef.current &&
+              document.visibilityState === "visible") ||
+            (data.ticket.userId && data.ticket.userId !== user?.id) ||
+            data.ticket.isGroup;
+
+          if (shouldNotNotificate) return;
+
+          handleNotifications(data);
+        }
+      }
+
 		});
 
 		return () => {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useReducer, useContext } from "react";
+import { useLocation } from "react-router-dom";
 import openSocket from "../../services/socket-io";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -163,6 +164,9 @@ const TicketsList = (props) => {
 	const {profile, queues} = user;
 	const [settingShowAll, setSettingShowAll] = useState("")
 
+  const location = useLocation();
+  const spyUserPath = location.pathname
+
 	useEffect(() => {
 		dispatch({ type: "RESET" });
 		setPageNumber(1);
@@ -249,10 +253,28 @@ const TicketsList = (props) => {
 
 		socket.on("appMessage", data => {
 			if (data.action === "create" && shouldUpdateTicket(data.ticket)) {
-				dispatch({
-					type: "UPDATE_TICKET_UNREAD_MESSAGES",
-					payload: data.ticket,
-				});
+        if (data.ticket.userId === user.id) {
+          dispatch({
+            type: "UPDATE_TICKET_UNREAD_MESSAGES",
+            payload: data.ticket,
+          });
+        } else {
+          if (user.profile === "admin") {
+            if (spyUserPath.includes("spyUser")) {
+							if (data.ticket.userId === user.id) {
+								dispatch({
+									type: "UPDATE_TICKET_UNREAD_MESSAGES",
+									payload: data.ticket,
+								});
+							}
+            } else {
+							dispatch({
+                type: "UPDATE_TICKET_UNREAD_MESSAGES",
+                payload: data.ticket,
+              });
+						}
+          }
+        }
 			}
 		});
 
